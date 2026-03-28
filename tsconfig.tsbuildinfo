@@ -1,0 +1,1 @@
+{"root":["./src/App.tsx","./src/main.tsx","./src/lib/syncEngine.ts","./src/lib/utils.ts","./src/pages/AdminDashboard.tsx","./src/pages/Login.tsx","./src/pages/ParentDashboard.tsx","./src/pages/TeacherDashboard.tsx"],"version":"5.6.3"}
