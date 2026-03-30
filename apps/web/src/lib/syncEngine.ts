@@ -37,14 +37,36 @@ export const syncEngine = {
   },
 
   async mockSyncNext() {
-    // Simulates syncing the oldest pending item
     const pending = await this.getPendingOperations();
     if (pending.length === 0) return null;
     
-    const nextOp = pending[0];
-    nextOp.status = 'SYNCED';
-    await queueStore.setItem(nextOp.id, nextOp);
-    return nextOp;
+    try {
+      // POST to our new backend
+      const response = await fetch('http://localhost:3000/api/sync/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ operations: pending })
+      });
+
+      if (!response.ok) throw new Error('Sync failed');
+
+      const data = await response.json();
+      
+      // Update local status based on backend idempotent resolution
+      if (data.processed) {
+        for (const res of data.processed) {
+           const op = await queueStore.getItem<SyncOperation>(res.id);
+           if (op && res.status === 'SYNCED') {
+             op.status = 'SYNCED';
+             await queueStore.setItem(op.id, op);
+           }
+        }
+      }
+      return data;
+    } catch(e) {
+      console.warn('Network error or API offline. Data remains queued.', e);
+      return null;
+    }
   },
   
   async getStats() {

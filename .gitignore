@@ -2,3 +2,16 @@ node_modules/
 dist/
 .env
 apps/.env
+.env.example 
+apps/.env.example
+coverage/
+*.log
+*.tsbuildinfo
+.idea/
+.vscode/
+.DS_Store
+*.pem
+*.key
+*.crt
+*.pfx
+*.cer       

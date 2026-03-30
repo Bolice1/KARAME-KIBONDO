@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  emailOrPhone  String   @unique
+  passwordHash  String
+  role          Role
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  ecdCenterId   String?
+  ecdCenter     EcdCenter? @relation(fields: [ecdCenterId], references: [id])
+  children      Child[]
+}
+
+enum Role {
+  admin
+  teacher
+  parent
+}
+
+model EcdCenter {
+  id        String   @id @default(uuid())
+  name      String
+  location  String
+  createdAt DateTime @default(now())
+
+  users     User[]
+  children  Child[]
+}
+
+model Child {
+  id          String   @id @default(uuid())
+  name        String
+  age         Int
+  parentId    String
+  centerId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  parent      User      @relation(fields: [parentId], references: [id])
+  center      EcdCenter @relation(fields: [centerId], references: [id])
+
+  attendanceRecords AttendanceRecord[]
+  nutritionRecords  NutritionRecord[]
+}
+
+model AttendanceRecord {
+  id        String   @id @default(uuid())
+  childId   String
+  date      DateTime @db.Date
+  status    String   // 'present' or 'absent'
+  createdAt DateTime @default(now())
+
+  child     Child    @relation(fields: [childId], references: [id])
+
+  @@unique([childId, date])
+}
+
+model NutritionRecord {
+  id         String   @id @default(uuid())
+  childId    String?
+  centerId   String?
+  date       DateTime @db.Date
+  mealStatus String
+  createdAt  DateTime @default(now())
+
+  child      Child?   @relation(fields: [childId], references: [id])
+}
+
+model Alert {
+  id        String   @id @default(uuid())
+  type      String
+  message   String
+  createdAt DateTime @default(now())
+}
