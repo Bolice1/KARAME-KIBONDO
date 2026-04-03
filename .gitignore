@@ -1,17 +1,37 @@
+# Dependencies
 node_modules/
+
+# Build outputs
 dist/
-.env
-apps/.env
-.env.example 
-apps/.env.example
-coverage/
-*.log
+build/
 *.tsbuildinfo
-.idea/
-.vscode/
+
+# Environment & Secrets
+.env
+apps/**/.env
+.env.example 
+
+# Testing
+coverage/
+
+# Logs
+*.log
 .DS_Store
+
+# Security/Certs
 *.pem
 *.key
 *.crt
 *.pfx
-*.cer       
+*.cer
+
+# IDEs
+.idea/
+.vscode/
+
+# OS
+Thumbs.db
+
+# Temporary files
+uploads/
+temp/

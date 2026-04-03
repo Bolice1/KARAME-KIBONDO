@@ -1,4 +1,5 @@
-import { Users, AlertCircle, RefreshCw, BarChart2, CheckCircle2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Users, AlertCircle, RefreshCw, BarChart2, CheckCircle2, Trophy, TrendingUp, Loader2 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const data = [
@@ -10,6 +11,19 @@ const data = [
 ];
 
 export default function AdminDashboard() {
+  const [rankings, setRankings] = useState<any[]>([]);
+  const [insights, setInsights] = useState<any>(null);
+
+  useEffect(() => {
+    Promise.all([
+      fetch('http://localhost:3000/api/knowledge/rankings').then(res => res.json()),
+      fetch('http://localhost:3000/api/knowledge/insights').then(res => res.json())
+    ]).then(([rankData, insightData]) => {
+      setRankings(rankData);
+      setInsights(insightData);
+    });
+  }, []);
+
   return (
     <div className="flex flex-col gap-6 w-full max-w-5xl mx-auto px-4 lg:px-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mt-2">
@@ -81,6 +95,48 @@ export default function AdminDashboard() {
               </AreaChart>
             </ResponsiveContainer>
           </div>
+        </div>
+
+        {/* Ranking & Adoption Insights */}
+        <div className="bg-white p-6 rounded-2xl shadow-soft border border-neutral-100">
+           <div className="flex items-center gap-2 mb-6">
+             <Trophy size={20} className="text-warning-500" />
+             <h3 className="font-semibold text-neutral-800">Top Performing Centers</h3>
+           </div>
+           
+           <div className="flex flex-col gap-3">
+             {rankings.length === 0 ? (
+               <div className="flex justify-center py-4"><Loader2 className="animate-spin text-neutral-300" /></div>
+             ) : (
+               rankings.slice(0, 5).map((center, idx) => (
+               <div key={center.id} className="flex items-center justify-between p-3 bg-neutral-50 rounded-xl">
+                 <div className="flex items-center gap-3">
+                    <span className="text-lg font-black text-neutral-300">#{idx + 1}</span>
+                    <span className="font-medium text-sm">{center.name}</span>
+                 </div>
+                 <div className="flex flex-col items-end">
+                    <span className="text-xs font-bold text-primary-600">{center.score} pts</span>
+                    <span className="text-[10px] text-neutral-400">{center.adoptionCount} adoptions</span>
+                 </div>
+               </div>
+             )))}
+           </div>
+
+           <div className="mt-8">
+             <div className="flex items-center gap-2 mb-4">
+               <TrendingUp size={20} className="text-success" />
+               <h3 className="font-semibold text-neutral-800">Most Adopted Practices</h3>
+             </div>
+             <div className="space-y-3">
+                {insights?.topPractices.map((practice: any) => (
+                  <div key={practice.id} className="text-xs text-neutral-500 bg-neutral-50 p-2 rounded-lg border-l-2 border-primary-500">
+                    <p className="font-bold text-neutral-800">{practice.title}</p>
+                    <p>{practice._count.adoptions} centers adopted this methodology</p>
+                  </div>
+                ))}
+                {!insights && <p className="text-xs text-neutral-400 italic">Calculating trends...</p>}
+             </div>
+           </div>
         </div>
 
         {/* Rule-based Alerts System Component */}

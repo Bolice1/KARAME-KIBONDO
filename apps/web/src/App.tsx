@@ -1,9 +1,10 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import TeacherDashboard from './pages/TeacherDashboard';
 import ParentDashboard from './pages/ParentDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import Login from './pages/Login';
+import KnowledgeNetwork from './pages/KnowledgeNetwork';
 
 function App() {
   const [role, setRole] = useState<'teacher' | 'parent' | 'admin' | null>(null);
@@ -22,7 +23,8 @@ function App() {
             <button onClick={() => setRole('teacher')} className={`px-3 py-1 rounded-full transition-colors ${role === 'teacher' ? 'bg-primary-500 text-white' : 'hover:bg-neutral-100'}`}>Teacher</button>
             <button onClick={() => setRole('parent')} className={`px-3 py-1 rounded-full transition-colors ${role === 'parent' ? 'bg-primary-500 text-white' : 'hover:bg-neutral-100'}`}>Parent</button>
             <button onClick={() => setRole('admin')} className={`px-3 py-1 rounded-full transition-colors ${role === 'admin' ? 'bg-primary-500 text-white' : 'hover:bg-neutral-100'}`}>Admin</button>
-            <button onClick={() => setRole(null)} className={`px-3 py-1 rounded-full transition-colors ${role === null ? 'bg-neutral-200' : 'hover:bg-neutral-100'}`}>Out</button>
+            <Link to="/network" className="px-3 py-1 rounded-full hover:bg-primary-50 text-primary-600 font-medium transition-colors">Network</Link>
+            <button onClick={() => setRole(null)} className={`px-3 py-1 rounded-full transition-colors ${role === null ? 'bg-neutral-200' : 'hover:bg-neutral-100'}`}>Logout</button>
           </div>
         </header>
         
@@ -34,6 +36,8 @@ function App() {
               {role === 'teacher' && <Route path="/*" element={<TeacherDashboard />} />}
               {role === 'parent' && <Route path="/*" element={<ParentDashboard />} />}
               {role === 'admin' && <Route path="/*" element={<AdminDashboard />} />}
+              <Route path="/network" element={<KnowledgeNetwork />} />
+              <Route path="/" element={<Navigate to={role === 'admin' ? '/admin' : role === 'teacher' ? '/teacher' : '/parent'} replace />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           )}
