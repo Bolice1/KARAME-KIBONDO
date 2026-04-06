@@ -22,7 +22,7 @@ function App() {
           <div className="flex gap-2 text-sm bg-white p-1 rounded-full shadow-sm">
             <button onClick={() => setRole('teacher')} className={`px-3 py-1 rounded-full transition-colors ${role === 'teacher' ? 'bg-primary-500 text-white' : 'hover:bg-neutral-100'}`}>Teacher</button>
             <button onClick={() => setRole('parent')} className={`px-3 py-1 rounded-full transition-colors ${role === 'parent' ? 'bg-primary-500 text-white' : 'hover:bg-neutral-100'}`}>Parent</button>
-            <button onClick={() => setRole('admin')} className={`px-3 py-1 rounded-full transition-colors ${role === 'admin' ? 'bg-primary-500 text-white' : 'hover:bg-neutral-100'}`}>Admin</button>
+            <button onUnknownClick={() => setRole('admin')} className={`px-3 py-1 rounded-full transition-colors ${role === 'admin' ? 'bg-primary-500 text-white' : 'hover:bg-neutral-100'}`}>Admin</button>
             <Link to="/network" className="px-3 py-1 rounded-full hover:bg-primary-50 text-primary-600 font-medium transition-colors">Network</Link>
             <button onClick={() => setRole(null)} className={`px-3 py-1 rounded-full transition-colors ${role === null ? 'bg-neutral-200' : 'hover:bg-neutral-100'}`}>Logout</button>
           </div>
